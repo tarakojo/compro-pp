@@ -1,0 +1,73 @@
+
+%{
+(*
+文法
+
+S ::= <ident>
+    | <ident> : T
+    | S [ A ]
+    | S S 
+    | (S)
+
+A ::= <ident>
+    | <ident> + <ident>
+    | <ident> - <ident>
+    | <ident> * <ident>
+    | <ident> / <ident>
+    | <ident> % <ident>
+    | <ident> ^ <ident>
+    | `<code>` 
+
+T ::= <ident>
+    | `<code>` 
+*)
+open Syntax
+%}
+
+%token <string> IDENT
+%token <string> CODE
+%token <int> INT
+%token LPAREN RPAREN
+%token LBRACE RBRACE
+%token DOT 
+%token PLUS MINUS TIMES DIV MOD POW
+%token COLON COMMA  
+%token END
+
+%left DOT DOTDOT 
+%left PLUS MINUS
+%left TIMES DIV MOD 
+%right POW
+
+%type <Syntax.Expr> expr
+%start expr
+
+%%
+
+expr :  
+  | e END { $1 }
+  
+e : 
+  | s e { ESeq($1,$2) }
+  | s COMMA e { ESeq($1,$3) }
+  | s { $1 }
+
+s:
+  | IDENT { ERead ($1, "long long") }
+  | IDENT COLON IDENT { ERead ($1, $3) }
+  | IDENT COLON CODE { ERead ($1, $3) }
+  | s LBRACE a RBRACE { ERep ($1, AInt 0, $3) }
+  | s LBRACE DOT a RBRACE { ERep ($1, AInt 1, AAdd(AInt 1, $4)) }
+  | LPAREN e RPAREN { $2 }
+
+a:
+  | IDENT { AIdent $1 }
+  | INT { AInt $1 }
+  | a PLUS a { AAdd ($1, $3) }
+  | a MINUS a { ASub ($1, $3) }
+  | a TIMES a { AMul ($1, $3) }
+  | a DIV a { ADiv ($1, $3) }
+  | a MOD a { AMod ($1, $3) }
+  | a POW a { APow ($1, $3) }
+  | CODE { ACode $1 }
+

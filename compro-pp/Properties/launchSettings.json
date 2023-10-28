@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "compro-pp": {
+      "commandName": "Project",
+      "commandLineArgs": "test-source.cpp -hd test-header.cpp -o test-output.cpp",
+      "workingDirectory": "C:\\Users\\tarak\\source\\repos\\compro-pp"
+    }
+  }
+}

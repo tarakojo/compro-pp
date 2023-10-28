@@ -1,13 +1,27 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net6.0</TargetFramework>
     <RootNamespace>compro_pp</RootNamespace>
   </PropertyGroup>
-
   <ItemGroup>
-    <Compile Include="Program.fs" />
-  </ItemGroup>
+   <!-- read ------------------------------- -->
+    <FSYacc Include="src/Read/Parser.fsy">
+      <OtherFlags>-o src/Read/gen/Parser.fs --module Read.Parser</OtherFlags>
+    </FSYacc>
+    <FSLex Include="src/Read/Lexer.fsl">
+      <OtherFlags>-o src/Read/gen/Lexer.fs --unicode --module Read.Lexer</OtherFlags>
+    </FSLex>
+    <Compile Include="src/Read/Syntax.fs" />
+    <Compile Include="src/Read/gen/Parser.fs" />
+    <Compile Include="src/Read/gen/Lexer.fs" />
+    <Compile Include="src/Read/Read.fs" />
 
+
+    <Compile Include="src/Program.fs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="FsLexYacc" Version="11.2.0" />
+    <PackageReference Include="fs_cpp_generator" Version="0.1.0" />
+  </ItemGroup>
 </Project>

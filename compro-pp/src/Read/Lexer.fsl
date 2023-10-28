@@ -1,0 +1,36 @@
+{
+open FSharp.Text.Lexing
+open Read.Parser
+
+let lexeme lexbuf = LexBuffer<char>.LexemeString lexbuf
+}
+
+let whitespace = [' ' '\t' ]
+let integer = '-'*['0'-'9']+
+let identifier = ['a'-'z' 'A'-'Z' '0'-'9' '_']+
+let code = ".<" ( [^'>'] | '>'[^'.'] )* ">."
+
+rule tokenize = parse
+| whitespace { tokenize lexbuf }
+| identifier { IDENT(lexeme lexbuf) }
+| "(" { LPAREN }
+| ")" { RPAREN }
+| "[" { LBRACE }
+| "]" { RBRACE }
+| "." { DOT }
+| "," { COMMA }
+| "+" { PLUS }
+| "-" { MINUS }
+| "*" { TIMES }
+| "/" { DIV }
+| "%" { MOD }
+| "^" { POW }
+| ":" { COLON }
+| integer { INT(int (lexeme lexbuf)) }
+| code { 
+            let s = lexeme lexbuf 
+            let s = s.Substring(2, s.Length - 4)
+            CODE(s) 
+        }
+| _ {  END }
+| eof {  END }
